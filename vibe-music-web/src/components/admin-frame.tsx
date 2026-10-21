@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, type FormEvent, type ReactNode } from "react";
 import {
-  AudioLines,
   LoaderCircle,
   LogOut,
   MessageSquare,
@@ -70,7 +70,13 @@ export function AdminFrame({ children }: { children: ReactNode }) {
       >
         <div className="absolute right-6 top-5">{theme}</div>
         <div className="w-full max-w-sm rounded-xl border bg-card px-7 py-9 shadow-sm">
-          <AudioLines className="mx-auto mb-5 text-primary" size={42} />
+          <Image
+            src="/images/logo.png"
+            alt=""
+            width={56}
+            height={56}
+            className="mx-auto mb-5 rounded-lg"
+          />
           <h1 className="text-center text-2xl font-semibold">
             Vibe Music 管理后台
           </h1>
@@ -139,7 +145,13 @@ export function AdminFrame({ children }: { children: ReactNode }) {
           href="/admin"
           className="flex items-center gap-3 font-semibold text-white"
         >
-          <AudioLines size={24} className="text-blue-400" />
+          <Image
+            src="/images/logo.png"
+            alt=""
+            width={40}
+            height={40}
+            className="shrink-0 rounded-lg"
+          />
           Vibe Music
         </Link>
         <nav aria-label="后台导航" className="mt-6 space-y-2">
