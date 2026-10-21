@@ -1,0 +1,188 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* 纸感底色：暖米白 */
+    --theme-bg-color: 38 33% 96% / 100%;
+    --dm-background: 38 33% 96% / 96%;
+
+    --background: 38 33% 96%;
+    --foreground: 30 12% 12%;
+
+    --muted: 36 20% 93%;
+    --muted-foreground: 30 8% 45%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 30 12% 12%;
+
+    --card: #ffffff;
+    --card-foreground: 30 12% 12%;
+
+    --border: 36 15% 88%;
+    --input: 36 20% 93%;
+
+    --inactive: 30 8% 45%;
+
+    --heroui-default: 36 15% 88%;
+    --bg-content1: 0 0% 100%;
+
+    /* 菜单悬停：暖灰；选中：珊瑚橙红浅底（保留逗号格式，Table.vue 中以 hsl() 任意值引用） */
+    --hover-menu-bg: 36, 25%, 90%, 70%;
+    --active-menu-bg: 9, 100%, 59%, 12%;
+
+    /* 点缀色：珊瑚橙红 */
+    --primary: #ff4d2e;
+    --primary-foreground: 30 12% 12%;
+
+    --secondary: 36 20% 93%;
+    --secondary-foreground: 30 12% 12%;
+
+    --accent: 9 100% 96%;
+    --accent-foreground: 9 80% 40%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+
+    --ring: 9 100% 59%;
+
+    --radius: 0.625rem;
+  }
+
+  .dark {
+    --theme-bg-color: 222 25% 8% / 100%;
+    --dm-background: 222 25% 8% / 95%;
+
+    --background: 222 25% 8%;
+    --foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --popover: 222.2 47.4% 11.2%;
+    --popover-foreground: 210 40% 98%;
+
+    --inactive: 227 12% 50% / 78%;
+
+    --heroui-default: 240 5.26% 26.08%;
+    --bg-content1: 240 5.88% 10%;
+
+    --hover-menu-bg: 222, 36%, 80%, 30%;
+    --active-menu-bg: 9, 100%, 59%, 25%;
+
+    --card: rgb(146 151 179 / 13%);
+    --card-foreground: 210 40% 98%;
+
+    --border: 227 12% 50% / 25%;
+    --input: 217.2 32.6% 17.5%;
+
+    --primary: #ff4d2e;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --accent: 222 25% 18%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --ring: 9 100% 59%;
+  }
+}
+
+@layer components {
+  .vibe-md {
+    @apply break-words text-sm leading-relaxed;
+  }
+  .vibe-md p {
+    margin: 0.35em 0;
+  }
+  .vibe-md > :first-child {
+    margin-top: 0;
+  }
+  .vibe-md > :last-child {
+    margin-bottom: 0;
+  }
+  .vibe-md h1,
+  .vibe-md h2,
+  .vibe-md h3,
+  .vibe-md h4 {
+    @apply font-semibold;
+    margin: 0.7em 0 0.35em;
+    line-height: 1.4;
+  }
+  .vibe-md ul,
+  .vibe-md ol {
+    margin: 0.35em 0;
+    padding-left: 1.25em;
+  }
+  .vibe-md ul {
+    list-style: disc;
+  }
+  .vibe-md ol {
+    list-style: decimal;
+  }
+  .vibe-md li {
+    margin: 0.15em 0;
+  }
+  .vibe-md a {
+    @apply text-primary underline underline-offset-2;
+  }
+  .vibe-md strong {
+    @apply font-semibold;
+  }
+  .vibe-md blockquote {
+    @apply border-l-2 border-primary bg-muted/50 text-muted-foreground;
+    margin: 0.5em 0;
+    padding: 0.2em 0.9em;
+    border-radius: 0 8px 8px 0;
+  }
+  .vibe-md code {
+    @apply rounded bg-muted px-1.5 py-0.5 font-mono;
+    font-size: 0.8em;
+  }
+  .vibe-md pre {
+    @apply overflow-x-auto rounded-lg;
+    background: #26221c;
+    color: #faf7f2;
+    padding: 0.75em 1em;
+    margin: 0.5em 0;
+  }
+  .vibe-md pre code {
+    background: transparent;
+    padding: 0;
+    color: inherit;
+  }
+  .vibe-md table {
+    @apply block max-w-full overflow-x-auto text-xs;
+    border-collapse: collapse;
+    margin: 0.5em 0;
+  }
+  .vibe-md th,
+  .vibe-md td {
+    @apply border;
+    padding: 0.35em 0.7em;
+  }
+  .vibe-md th {
+    @apply bg-muted;
+  }
+  .vibe-md img {
+    @apply max-w-full rounded-lg;
+  }
+  .vibe-md hr {
+    @apply border-t;
+    margin: 0.8em 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

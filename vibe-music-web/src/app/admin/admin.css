@@ -1,0 +1,34 @@
+.admin-surface {
+  --background: 220 14% 96%;
+  --foreground: 220 10% 20%;
+  --card: #fff;
+  --primary: #409eff;
+  --border: 220 13% 87%;
+  --muted: 220 14% 94%;
+  --muted-foreground: 220 9% 46%;
+  --popover: 0 0% 100%;
+  --destructive: 0 72% 51%;
+  color: hsl(var(--foreground));
+  background: hsl(var(--background));
+  font-family: Arial, "Microsoft YaHei", sans-serif;
+  min-height: 100dvh;
+}
+.admin-surface.admin-dark {
+  --background: 222 16% 12%;
+  --foreground: 220 13% 91%;
+  --card: #23262e;
+  --border: 220 10% 26%;
+  --muted: 220 12% 20%;
+  --muted-foreground: 220 10% 68%;
+  --popover: 220 12% 16%;
+}
+.admin-data-table[data-density="small"] th,
+.admin-data-table[data-density="small"] td {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+.admin-data-table[data-density="large"] th,
+.admin-data-table[data-density="large"] td {
+  padding-top: 1.25rem;
+  padding-bottom: 1.25rem;
+}

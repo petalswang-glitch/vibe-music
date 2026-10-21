@@ -1,0 +1,26 @@
+.idea
+others
+
+### Test ###
+**/src/test
+*.drawio
+.zcode
+
+# New Next.js / FastAPI applications
+**/node_modules/
+**/.next/
+**/.venv/
+**/__pycache__/
+**/.pytest_cache/
+**/.ruff_cache/
+**/*.egg-info/
+.env
+.env.*
+!.env.example
+!**/.env.example
+!**/.env.local.example
+**/dist/
+**/coverage/
+*.tsbuildinfo
+/.cache/
+/.backups/

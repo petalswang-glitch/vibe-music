@@ -1,0 +1,46 @@
+{
+  "name": "vibe-music-web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.21.0",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "dev": "next dev --webpack",
+    "build": "next build --webpack",
+    "start": "next start",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.104.4",
+    "axios": "1.20.0",
+    "echarts": "6.1.0",
+    "lucide-react": "1.59.0",
+    "markdown-it": "15.0.3",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1",
+    "zustand": "5.0.8"
+  },
+  "devDependencies": {
+    "@types/node": "24.10.1",
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "autoprefixer": "10.4.22",
+    "eslint": "9.39.1",
+    "eslint-config-next": "16.4.2",
+    "postcss": "8.5.31",
+    "tailwindcss": "3.4.17",
+    "typescript": "5.9.3"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": "8.5.31",
+      "postcss-selector-parser": "7.1.7"
+    }
+  }
+}

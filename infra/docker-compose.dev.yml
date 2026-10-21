@@ -1,0 +1,64 @@
+name: vibe-music-dev
+
+services:
+  mailpit:
+    profiles: ["mail"]
+    image: axllent/mailpit:v1.31.4@sha256:b68349e3a014b90c5610bfb26b2ae36f3892d7b8cf25ee140c6c71c98d2fcf48
+    ports:
+      - "127.0.0.1:${SMTP_PORT:-21025}:1025"
+      - "127.0.0.1:${MAILPIT_UI_PORT:-28025}:8025"
+
+  minio:
+    image: vibe-music-minio:RELEASE.2025-10-15T17-29-55Z
+    build:
+      context: .
+      dockerfile: minio.Dockerfile
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-vibe_local_media}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-vibe_local_media_dev_only}
+    ports:
+      - "127.0.0.1:${MINIO_API_PORT:-29000}:9000"
+      - "127.0.0.1:${MINIO_CONSOLE_PORT:-29001}:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+
+  postgres:
+    image: postgres:16.13-alpine@sha256:4e6e670bb069649261c9c18031f0aded7bb249a5b6664ddec29c013a89310d50
+    environment:
+      POSTGRES_DB: vibe_music
+      POSTGRES_USER: vibe
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-vibe_local_dev}
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-25432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vibe -d vibe_music"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:${REDIS_PORT:-26379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  minio_data:
+  postgres_data:
+  redis_data:

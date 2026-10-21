@@ -1,0 +1,64 @@
+name: vibe-music-infra
+
+services:
+  postgres:
+    image: postgres:16.13-alpine@sha256:4e6e670bb069649261c9c18031f0aded7bb249a5b6664ddec29c013a89310d50
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_DB: vibe_music
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Generate infra/.env.server first}
+      APP_DATABASE_PASSWORD: ${DATABASE_PASSWORD:?Set application database password}
+    ports:
+      - "127.0.0.1:25432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./postgres-init.sh:/docker-entrypoint-initdb.d/010-app-user.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d vibe_music"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+    restart: unless-stopped
+    command: ["sh", "-c", "exec redis-server --appendonly yes --requirepass \"$$REDISCLI_AUTH\""]
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?Set Redis password}
+    ports:
+      - "127.0.0.1:26379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  minio:
+    image: vibe-music-minio:RELEASE.2025-10-15T17-29-55Z
+    build:
+      context: .
+      dockerfile: minio.Dockerfile
+    restart: unless-stopped
+    command: ["server", "/data", "--console-address", ":9001"]
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:?Set MinIO access key}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:?Set MinIO secret key}
+    ports:
+      - "127.0.0.1:29000:9000"
+      - "127.0.0.1:29001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+      start_period: 30s
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
