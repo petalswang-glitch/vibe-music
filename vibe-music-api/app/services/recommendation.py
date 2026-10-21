@@ -10,8 +10,9 @@ from redis.exceptions import RedisError
 from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Favorite, Genre, Playlist, Song
+from app.models import Favorite, Genre, Playlist, Song, Style
 from app.repositories import catalogue as repository
+from app.services.listening import recent_song_ids
 
 logger = logging.getLogger(__name__)
 POOL_TTL = 30 * 60
@@ -112,13 +113,14 @@ async def songs(session: AsyncSession, user_id: int | None, redis: Redis | None)
     rows = []
     if user_id is not None:
         favorites = await favorite_ids(session, user_id)
+        preferences = sorted(set(favorites) | set(await recent_song_ids(session, user_id)))
         styles = (
             list(
                 await session.scalars(
-                    select(Genre.style_id).where(Genre.song_id.in_(favorites)).distinct()
+                    select(Genre.style_id).where(Genre.song_id.in_(preferences)).distinct()
                 )
             )
-            if favorites
+            if preferences
             else []
         )
         if styles:
@@ -143,6 +145,13 @@ async def playlists(session: AsyncSession, user_id: int | None):
             if favorites
             else []
         )
+        history = await recent_song_ids(session, user_id)
+        if history:
+            history_styles = await session.scalars(
+                select(Style.name).join(Genre, Genre.style_id == Style.id)
+                .where(Genre.song_id.in_(history)).distinct()
+            )
+            styles = sorted(set(styles) | set(history_styles))
         if styles:
             # Approved correction: compare styles with styles, not playlist IDs.
             rows = await repository.mappings(

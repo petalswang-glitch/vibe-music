@@ -1,4 +1,4 @@
-import { mediaUrl } from "./media-url.ts";
+import { getBrowserToken } from "./api-client.ts";
 import type { Song } from "../types/song.ts";
 
 export function downloadFilename(song: Song): string {
@@ -8,9 +8,19 @@ export function downloadFilename(song: Song): string {
 }
 
 export async function downloadSong(song: Song): Promise<void> {
-  const url = mediaUrl(song.audioUrl);
-  if (!url) throw new Error("音频资源不可用");
-  const response = await fetch(url);
+  const token = getBrowserToken();
+  if (!token) throw new Error("请登录后下载歌曲");
+  if (!song.audioUrl) throw new Error("音频资源不可用");
+  const response = await fetch(`/api/song/${song.songId}/download`, {
+    headers: { Authorization: `Bearer ${token}` },
+    cache: "no-store",
+  });
+  if (response.status === 401) {
+    if (typeof window !== "undefined" && getBrowserToken() === token) {
+      window.dispatchEvent(new Event("vibe-auth-expired"));
+    }
+    throw new Error("登录已失效，请重新登录");
+  }
   if (!response.ok || !(response.headers.get("content-type") ?? "").toLowerCase().startsWith("audio/")) {
     throw new Error("音频资源不可用，无法下载");
   }

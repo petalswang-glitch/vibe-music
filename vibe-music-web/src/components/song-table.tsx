@@ -7,6 +7,8 @@ import { downloadSong } from "@/lib/download-song";
 import { usePlayer } from "@/providers/player-provider";
 import type { Song } from "@/types/song";
 import { FavoriteButton } from "@/components/favorite-button";
+import { AuthDialog } from "@/components/auth-dialog";
+import { useAuth } from "@/providers/auth-provider";
 
 export function SongTable({
   songs,
@@ -20,8 +22,11 @@ export function SongTable({
     (state) => state.queue[state.currentIndex]?.songId,
   );
   const [downloadError, setDownloadError] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [authOpen, setAuthOpen] = useState(false);
   const [downloading, setDownloading] = useState<number | null>(null);
   async function download(song: Song) {
+    if (!user) { setAuthOpen(true); return; }
     setDownloadError(null);
     setDownloading(song.songId);
     try {
@@ -40,6 +45,7 @@ export function SongTable({
     );
   return (
     <>
+      {authOpen && <AuthDialog onClose={() => setAuthOpen(false)} />}
       {downloadError && (
         <p role="alert" className="px-4 py-2 text-sm text-destructive">
           {downloadError}
