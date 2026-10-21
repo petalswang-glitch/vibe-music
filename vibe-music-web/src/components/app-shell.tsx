@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  AudioLines,
   Disc3,
   Home,
   Heart,
@@ -31,7 +30,13 @@ export function AppShell({ children }: { children: ReactNode }) {
           href="/"
           className="flex shrink-0 items-center gap-2 font-serif-display text-lg font-semibold sm:gap-3 sm:text-xl"
         >
-          <AudioLines className="text-primary" size={26} />
+          <Image
+            src="/images/logo.png"
+            alt=""
+            width={40}
+            height={40}
+            className="shrink-0 rounded-lg"
+          />
           Vibe Music
         </Link>
         <div className="order-3 w-full sm:order-none sm:w-auto sm:min-w-0 sm:flex-1 sm:px-5">
