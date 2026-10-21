@@ -4,10 +4,11 @@ import { useEffect, useRef, useState, type FormEvent } from "react";
 import { X } from "lucide-react";
 import { apiClient, getApi, postApi } from "@/lib/api-client";
 import { authError, useAuth } from "@/providers/auth-provider";
+import { AccountRuleInput } from "@/components/account-rule-input";
+import { accountFieldValid, loginErrorMessage } from "@/lib/account-rules";
 
 type Mode = "login" | "register" | "reset";
 const titles = { login: "登录", register: "注册", reset: "重置密码" };
-const passwordPattern = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z\W]{8,18}$/;
 
 export function AuthDialog({ onClose }: { onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
@@ -75,8 +76,12 @@ export function AuthDialog({ onClose }: { onClose: () => void }) {
     event.preventDefault();
     setError(null);
     setMessage(null);
-    if (!passwordPattern.test(password)) {
-      setError("密码格式：8-18位数字、字母、符号的任意两种组合");
+    if (mode === "register" && !accountFieldValid("username", username)) {
+      setError("用户名需要 4～16 位，仅支持英文字母、数字、下划线或连字符");
+      return;
+    }
+    if (mode !== "login" && !accountFieldValid("password", password)) {
+      setError("密码需要 8～18 位，不能仅含数字或仅含英文字母，且不能包含下划线");
       return;
     }
     if (mode === "reset" && repeat !== password) {
@@ -113,7 +118,10 @@ export function AuthDialog({ onClose }: { onClose: () => void }) {
         }
       }
     } catch (cause) {
-      if (alive.current) setError(authError(cause));
+      if (alive.current) {
+        const detail = authError(cause);
+        setError(mode === "login" ? loginErrorMessage(detail) : detail);
+      }
     } finally {
       if (alive.current) setBusy(false);
     }
@@ -127,7 +135,7 @@ export function AuthDialog({ onClose }: { onClose: () => void }) {
         event.preventDefault();
         onClose();
       }}
-      className="m-auto w-[min(26rem,calc(100%-2rem))] rounded-2xl border bg-background p-6 text-foreground shadow-paper-lg backdrop:bg-black/40"
+      className="m-auto max-h-[calc(100dvh-2rem)] w-[min(26rem,calc(100%-2rem))] overflow-y-auto rounded-2xl border bg-background p-6 text-foreground shadow-paper-lg backdrop:bg-black/40"
     >
       <header className="mb-5 flex items-center justify-between">
         <h2
@@ -151,20 +159,26 @@ export function AuthDialog({ onClose }: { onClose: () => void }) {
             ? "创建一个新账户"
             : "通过邮箱验证码重置密码"}
       </p>
-      <form onSubmit={submit} className="space-y-4">
+      <form
+        onSubmit={submit}
+        onInvalidCapture={(event) => {
+          // Keep our persistent guidance instead of the browser's generic popup.
+          event.preventDefault();
+          setError(mode === "register"
+            ? "注册尚未完成，请检查并补全表单中的要求。"
+            : mode === "login" ? "邮箱或密码错误" : "请检查并补全表单中的要求。");
+          const firstInvalid = event.currentTarget.querySelector<HTMLInputElement>("input:invalid");
+          if (event.target === firstInvalid) firstInvalid?.focus();
+        }}
+        className="space-y-4"
+      >
+        {mode === "register" && error && (
+          <p role="alert" className="rounded-lg border border-destructive/30 bg-destructive/5 px-3 py-2 text-sm text-destructive">
+            {error}
+          </p>
+        )}
         {mode === "register" && (
-          <label className="block text-sm">
-            用户名
-            <input
-              required
-              autoComplete="username"
-              pattern="[a-zA-Z0-9_-]{4,16}"
-              title="4-16位字母、数字、下划线或连字符"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-              className={`${inputClass} mt-1.5`}
-            />
-          </label>
+          <AccountRuleInput kind="username" label="用户名" value={username} onChange={setUsername} autoComplete="username" />
         )}
         <label className="block text-sm">
           邮箱
@@ -206,21 +220,28 @@ export function AuthDialog({ onClose }: { onClose: () => void }) {
             </label>
           </div>
         )}
-        <label className="block text-sm">
-          {mode === "reset" ? "新密码" : "密码"}
-          <input
-            required
-            type="password"
-            autoComplete={
-              mode === "login" ? "current-password" : "new-password"
-            }
-            minLength={8}
-            maxLength={18}
+        {mode === "login" ? (
+          <label className="block text-sm">
+            密码
+            <input
+              required
+              type="password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              className={`${inputClass} mt-1.5`}
+            />
+          </label>
+        ) : (
+          <AccountRuleInput
+            key={mode}
+            kind="password"
+            label={mode === "reset" ? "新密码" : "密码"}
             value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            className={`${inputClass} mt-1.5`}
+            onChange={setPassword}
+            autoComplete="new-password"
           />
-        </label>
+        )}
         {mode === "reset" && (
           <label className="block text-sm">
             确认密码
@@ -228,15 +249,13 @@ export function AuthDialog({ onClose }: { onClose: () => void }) {
               required
               type="password"
               autoComplete="new-password"
-              minLength={8}
-              maxLength={18}
               value={repeat}
               onChange={(event) => setRepeat(event.target.value)}
               className={`${inputClass} mt-1.5`}
             />
           </label>
         )}
-        {error && (
+        {error && mode !== "register" && (
           <p role="alert" className="text-sm text-destructive">
             {error}
           </p>
