@@ -24,3 +24,4 @@ others
 *.tsbuildinfo
 /.cache/
 /.backups/
+*.baiduyun.p.downloading

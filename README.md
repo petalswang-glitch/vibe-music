@@ -2,6 +2,8 @@
 
 基于 Next.js、FastAPI 和 LangGraph 的全栈音乐平台。
 
+作者：[petalswang-glitch](https://github.com/petalswang-glitch)。
+
 - 用户端：曲库搜索、歌手与歌单、收藏、评论、个人中心、全局播放器。
 - 游客可浏览、搜索、播放和切换暗黑模式；登录后可管理资料、收藏、评论点赞及下载歌曲。
 - 个性化推荐结合收藏偏好和最近听歌历史；有效播放才记录，同一首歌半小时内去重。
@@ -29,4 +31,6 @@ scripts/deploy/ 私有运行配置生成工具
 
 ## License
 
-Based on the original work by [Alex-LiSun](https://github.com/Alex-LiSun), with modifications by zl1nq. Distributed under the MIT License. See LICENSE and NOTICE.
+Based on the original work by [Alex-LiSun](https://github.com/Alex-LiSun),
+with modifications by petalswang-glitch.
+Distributed under the MIT License. See [LICENSE](LICENSE) and [NOTICE](NOTICE).

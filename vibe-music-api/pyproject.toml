@@ -6,6 +6,7 @@ build-backend = "hatchling.build"
 name = "vibe-music-api"
 version = "0.1.0"
 description = "Vibe Music FastAPI backend"
+authors = [{ name = "petalswang-glitch" }]
 requires-python = ">=3.12,<3.13"
 dependencies = [
   "fastapi>=0.115,<1",
