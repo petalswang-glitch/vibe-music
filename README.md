@@ -26,7 +26,7 @@ scripts/deploy/ 私有运行配置生成工具
 docs/guide/     运行与开发详细说明
 ```
 
-前后端使用 uv、pnpm 原生运行；Docker 仅用于基础服务，不包含项目应用镜像。数据库结构由 Alembic 管理，不依赖 MySQL。
+前后端使用 uv、pnpm 原生运行；Docker 仅用于基础服务，不包含项目应用镜像。数据库结构由 Alembic 管理。
 
 私有配置、模型密钥、媒体文件和数据库备份不提交 Git。
 
